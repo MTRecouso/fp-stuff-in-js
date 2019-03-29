@@ -5,7 +5,7 @@ Repo created with the purpose of studying functional programming using only Java
 
 In the current moment, the data types Identity, Maybe and Either are implemented with their respective instances of Monad.
 
-The next steps are implementing the Functor, Applicative and Monoid categories to each of these three data types.
+The next steps are the implementations of Functor, Applicative and Monoid categories to each of these three data types.
 
 
 
