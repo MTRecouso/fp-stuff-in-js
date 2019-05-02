@@ -1,16 +1,20 @@
 const commonFns = require('./common_functions')
 
+
 //Value Constructor
 
-function Identity(value){
-    if(!(this instanceof Identity))
-        return new Identity(value)
-    this.value=value;
-}
+const Identity = (value) => ({
+  valueOf: () => value,
+    
+  //Making Identity an instance of Functor
+  fmap: fn => Identity(fn(value)),
 
-//Making Identity an instance of Functor
+  //Making Identity an instance of Monad
 
-const identityFmap = fn => fa => Identity(fn(fa.value))
+  mBind: fn => fn(value),
+  mReturn: (value) => Identity(value)
+})
+
 
 //Proving that it satisfies the functor laws
 
@@ -19,18 +23,13 @@ const identityFmap = fn => fa => Identity(fn(fa.value))
   Composition: fmap f . g = fmap f . fmap g
 */
 
-const functorIdentity = fa => JSON.stringify(identityFmap(a => a)(fa)) === JSON.stringify(fa);
+const functorIdentity = fa => fa.fmap(a=>a).valueOf() === fa.valueOf();
 
-const functorComposition = (fa,f,g) => JSON.stringify(identityFmap(commonFns.compose(f,g))(fa)) === JSON.stringify(commonFns.compose(identityFmap(f),identityFmap(g))(fa))
+const functorComposition = (fa,f,g) => fa.fmap((commonFns.compose(f,g))).valueOf() === fa.fmap(f).fmap(g).valueOf();
 
 console.log('identity',functorIdentity(Identity(6)))
 console.log('composition ', functorComposition(Identity(6),a => a + 5, b => b + 7))
 
-//Making Identity an instance of Monad
-
-const identityBind = (ma, fn) => fn(ma.value);
-
-const identityReturn = (a) => Identity(a);
 
 //Testing it with a few functions
 
@@ -38,7 +37,7 @@ const add2 = (a) => Identity(a + 2);
 
 const multiply2 = (a) => Identity(a * 2);
 
-identityBind(identityBind(Identity(2),add2),multiply2);
+console.log(Identity(2).mBind(add2).mBind(multiply2).valueOf());
 
 /*
 Proving that it satisfies the monadic laws:
@@ -50,11 +49,13 @@ Right identity: m >>= return ≡ m
 Associativity: (m >>= f) >>= g ≡ m >>= (\x -> f x >>= g) 
 */
 
-const leftId = (f,a) => JSON.stringify(identityBind(identityReturn(a),f)) === JSON.stringify(f(a))
+// const leftId = (f,a) => JSON.stringify(identityBind(identityReturn(a),f)) === JSON.stringify(f(a))
 
-const rightId = (m) => JSON.stringify(identityBind(m, identityReturn)) === JSON.stringify(m);
+const leftId = (f,a) => Identity().mReturn(a).mBind(f).valueOf() === f(a).valueOf()
 
-const associativity = (m,f,g) => JSON.stringify(identityBind(identityBind(m,f),g)) ===  JSON.stringify(identityBind(m,((x) => identityBind(f(x),g)))) 
+const rightId = (m) => m.mBind(m.mReturn).valueOf() === m.valueOf();
+
+const associativity = (m,f,g) => m.mBind(f).mBind(g).valueOf() ===  m.mBind((x) => f(x).mBind(g)).valueOf();
 
 console.log('left identity', leftId(add2,2))
 
