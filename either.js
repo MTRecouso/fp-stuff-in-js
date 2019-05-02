@@ -1,44 +1,42 @@
 //Value Constructors
 
-function Left(value){
-    if(!(this instanceof Left))
-        return new Left(value)
-    this.value=value
-}
+const Right = (value) => ({
+    valueOf: () => value,
+  
+    //Making Right an instance of Monad 
+    mBind: fn => fn(value),
+    mReturn: (value) => Right(value),
+    getType: () => "Right"
+});
 
-function Right(value){
-    if(!(this instanceof Right))
-        return new Right(value)
-    this.value=value
-}
+const Left = (value) => ({
+    valueOf: () => value,
+  
+    //Making Left an instance of Monad 
+    mBind: _ => Left(value),
+    /*
+        Return is not implemented in this case since it is supposed to recieve a value
+        and return Right(value) in the Applicative (since return = pure) instance from Either
+    */
+   getType: () => "Left"
+});
 
 //Implementing function either
 
-const either = (fa,fb,e) => e instanceof Left ? fa(e.value) : fb(e.value);
+const either = (fa,fb,e) => e.getType() === "Left" ? fa(e.valueOf()) : fb(e.valueOf());
 
-console.log(either((a) => a.length,(a) => a * 3,Right(6)))
-
-//Making Either an instance of Monad
-
-const eitherReturn = (a) => Right(a)
-
-const eitherBind = (ma, fn) => {
-    if(ma instanceof Left){
-        return Left(ma.value)
-    }
-    return fn(ma.value)
-}
+console.log(either((a) => a.length,(a) => a * 3,Right(6)));
 
 //Testing it with a few functions
 
 const add2Either = (a) =>{
     try{
         if(a === undefined)
-            throw new Error()
+            throw new Error();
         return Right(a + 2);
     }
     catch(e){
-        return Left(e)
+        return Left(e);
     }
 }
 
@@ -51,9 +49,9 @@ const multiply2Either = (a) =>{
     }
 }
 
-console.log(eitherBind(eitherBind(Right(undefined),add2Either),multiply2Either));
+console.log(Right(undefined).mBind(add2Either).mBind(multiply2Either).valueOf());
 
-console.log(eitherBind(eitherBind(Right(3),add2Either),multiply2Either));
+console.log(Right(3).mBind(add2Either).mBind(multiply2Either).valueOf());
 
 /*
 Proving that it satisfies the monadic laws
@@ -65,14 +63,14 @@ Right identity: m >>= return ≡ m
 Associativity: (m >>= f) >>= g ≡ m >>= (\x -> f x >>= g) 
 */
 
-const leftIdEither = (f,a) => JSON.stringify(eitherBind(eitherReturn(a),f)) === JSON.stringify(f(a))
+const leftId = (f,a) => Right().mReturn(a).mBind(f).valueOf() === f(a).valueOf()
 
-const rightIdEither = (m) => JSON.stringify(eitherBind(m, maybeReturn)) === JSON.stringify(m);
+const rightId = (m) => m.mBind(Right().mReturn).valueOf() === m.valueOf();
 
-const associativityEither = (m,f,g) => JSON.stringify(eitherBind(eitherBind(m,f),g)) ===  JSON.stringify(eitherBind(m,((x) => eitherBind(f(x),g)))) 
+const associativity = (m,f,g) => m.mBind(f).mBind(g).valueOf() ===  m.mBind((x) => f(x).mBind(g)).valueOf();
 
-console.log(leftIdEither(add2Either,2))
+console.log(leftId(add2Either,2))
 
-console.log(rightIdEither(Right(4)));
+console.log(rightId(Right(4)));
 
-console.log(associativityEither(Right(4),add2Either,multiply2Either));
+console.log(associativity(Right(4),add2Either,multiply2Either));
