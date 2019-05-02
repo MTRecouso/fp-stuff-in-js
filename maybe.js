@@ -1,26 +1,28 @@
 //Value Constructors
 
-function Just(value){
-    if(!(this instanceof Just))
-        return new Just(value)
-    this.value=value
-}
 
-function Nothing(){
-    if(!(this instanceof Nothing))
-        return new Nothing();
-}
+const Just = (value) => ({
+    valueOf: () => value,
+  
+    //Making Just an instance of Monad
+    mBind: fn =>  {
+        if(value===null || value===undefined){
+            return Nothing()
+        }
+        return fn(value)
+    },
+    mReturn: value => Just(value)
+})
 
-//Making Maybe an instance of Monad
-
-const maybeReturn = (a) => Just(a)
-
-const maybeBind = (ma, fn) => {
-    if(ma instanceof Nothing || ma.value===null || ma.value===undefined){
-        return Nothing()
-    }
-    return fn(ma.value)
-} 
+const Nothing = () => ({
+    valueOf: () => undefined,
+    //Making Nothing an instance of Monad
+    mBind: fn => Nothing(),
+    /*
+        Return is not implemented in this case since it is supposed to recieve a value
+        and return Just(value) in the Applicative (since return = pure) instance from Maybe
+    */
+})
 
 //Testing it with a few functions
 
@@ -30,7 +32,9 @@ const add2Maybe = (a) => Just(a + 2);
 
 const multiply2Maybe = (a) => Just(a * 2);
 
-console.log(maybeBind(maybeBind(Just(3),addUndefined),multiply2Maybe));
+console.log(Just(3).mBind(add2Maybe).mBind(multiply2Maybe).valueOf());
+
+console.log(Just(null).mBind(add2Maybe).mBind(multiply2Maybe).valueOf());
 
 /*
 Proving that it satisfies the monadic laws
@@ -42,14 +46,15 @@ Right identity: m >>= return ≡ m
 Associativity: (m >>= f) >>= g ≡ m >>= (\x -> f x >>= g) 
 */
 
-const leftIdMaybe = (f,a) => JSON.stringify(maybeBind(maybeReturn(a),f)) === JSON.stringify(f(a))
+const leftId = (f,a) => Just().mReturn(a).mBind(f).valueOf() === f(a).valueOf()
 
-const rightIdMaybe = (m) => JSON.stringify(maybeBind(m, maybeReturn)) === JSON.stringify(m);
+const rightId = (m) => m.mBind(Just().mReturn).valueOf() === m.valueOf();
 
-const associativityMaybe = (m,f,g) => JSON.stringify(maybeBind(maybeBind(m,f),g)) ===  JSON.stringify(maybeBind(m,((x) => maybeBind(f(x),g)))) 
+const associativity = (m,f,g) => m.mBind(f).mBind(g).valueOf() ===  m.mBind((x) => f(x).mBind(g)).valueOf();
 
-console.log(leftIdMaybe(add2Maybe,2))
 
-console.log(rightIdMaybe(Nothing()));
+console.log(leftId(add2Maybe,2))
 
-console.log(associativityMaybe(Nothing(),add2Maybe,multiply2Maybe))
+console.log(rightId(Nothing()));
+
+console.log(associativity(Nothing(),add2Maybe,multiply2Maybe))
