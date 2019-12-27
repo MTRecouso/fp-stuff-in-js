@@ -5,6 +5,11 @@ const commonFns = require('./common_functions')
 
 const Identity = (value) => ({
   valueOf: () => value,
+
+  //Making Identity an instance of Monoid
+  mappend: (mb) => Identity(commonFns.mappend(value, mb.valueOf())),
+
+  mempty: () => Identity({mempty: true}),
     
   //Making Identity an instance of Functor
   fmap: fn => Identity(fn(value)),
@@ -16,7 +21,32 @@ const Identity = (value) => ({
 })
 
 
-//Proving that it satisfies the functor laws
+console.log(Identity(4).mappend(Identity(7)).valueOf());
+
+console.log(Identity({a: "aaa", b:"gggg"}).mappend(Identity({c: "ssss", d: "ggggg"})).valueOf());
+
+console.log(Identity((a) => a + 2).mappend(Identity((b) => b + 3)).valueOf()(5));
+
+console.log(Identity((a) => a + 9).mappend(Identity().mempty()).valueOf()(5));
+
+console.log(Identity(true).mappend(Identity(true)).valueOf())
+
+//Proving that it satisfies the Monoid laws
+
+const monoidRightId = x => x.mappend(Identity().mempty()).valueOf() === x.valueOf();
+
+const monoidLeftId = (x) => Identity().mempty().mappend(x).valueOf() === x.valueOf();
+
+const monoidAssociativity = (x,y,z) => x.mappend(y).mappend(z).valueOf() === x.mappend(y.mappend(z)).valueOf(); 
+
+
+console.log('Monoid left identity', monoidLeftId(Identity(5)))
+
+console.log('Monoid right identity', monoidRightId(Identity(2)));
+
+console.log('Monoid associativity', monoidAssociativity(Identity(2), Identity(5), Identity(7)));
+
+//Proving that it satisfies the Functor laws
 
 /*
   Identity:  fmap id = id
@@ -48,8 +78,6 @@ Right identity: m >>= return ≡ m
 
 Associativity: (m >>= f) >>= g ≡ m >>= (\x -> f x >>= g) 
 */
-
-// const leftId = (f,a) => JSON.stringify(identityBind(identityReturn(a),f)) === JSON.stringify(f(a))
 
 const leftId = (f,a) => Identity().mReturn(a).mBind(f).valueOf() === f(a).valueOf()
 
