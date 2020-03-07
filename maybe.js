@@ -4,6 +4,7 @@ const commonFns = require('./common_functions')
 
 const Just = (value) => ({
 
+    //Making Just an instance of Functor
     fmap: fn => Just(fn(value)), 
 
     valueOf: () => value,
@@ -19,6 +20,8 @@ const Just = (value) => ({
 })
 
 const Nothing = () => ({
+
+    //Making Nothing an instance of Functor
     fmap: fn => Nothing(),
 
     valueOf: () => undefined,
