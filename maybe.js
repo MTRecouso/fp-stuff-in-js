@@ -1,7 +1,11 @@
+const commonFns = require('./common_functions')
+
 //Value Constructors
 
-
 const Just = (value) => ({
+
+    fmap: fn => Just(fn(value)), 
+
     valueOf: () => value,
   
     //Making Just an instance of Monad
@@ -15,6 +19,8 @@ const Just = (value) => ({
 })
 
 const Nothing = () => ({
+    fmap: fn => Nothing(),
+
     valueOf: () => undefined,
     //Making Nothing an instance of Monad
     mBind: fn => Nothing(),
@@ -35,6 +41,22 @@ const multiply2Maybe = (a) => Just(a * 2);
 console.log(Just(3).mBind(add2Maybe).mBind(multiply2Maybe).valueOf());
 
 console.log(Just(null).mBind(add2Maybe).mBind(multiply2Maybe).valueOf());
+
+
+//Proving that it satisfies the Functor laws
+
+/*
+  Identity:  fmap id = id
+  Composition: fmap f . g = fmap f . fmap g
+*/
+
+const functorIdentity = fa => fa.fmap(a=>a).valueOf() === fa.valueOf();
+
+const functorComposition = (fa,f,g) => fa.fmap((commonFns.compose(f,g))).valueOf() === fa.fmap(f).fmap(g).valueOf();
+
+console.log('identity',functorIdentity(Just(6)));
+console.log('composition ', functorComposition(Just(8),a => a + 5, b => b + 7));
+
 
 /*
 Proving that it satisfies the monadic laws
