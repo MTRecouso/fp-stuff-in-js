@@ -33,6 +33,12 @@ console.log(Identity(true).mappend(Identity(true)).valueOf())
 
 //Proving that it satisfies the Monoid laws
 
+/*
+  Right identity: x <> mempty = x
+  Left identity: mempty <> x = x
+  Associativity: (x <> y) <> z = x <> (y <> z)
+*/
+
 const monoidRightId = x => x.mappend(Identity().mempty()).valueOf() === x.valueOf();
 
 const monoidLeftId = (x) => Identity().mempty().mappend(x).valueOf() === x.valueOf();
