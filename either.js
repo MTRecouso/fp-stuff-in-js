@@ -1,7 +1,15 @@
+const commonFns = require('./common_functions')
+
 //Value Constructors
 
 const Right = (value) => ({
     valueOf: () => value,
+
+    //Making Right an instance of Semigroup
+    mappend: mb => Right(value),
+
+    //Making Right an instance of Functor
+    fmap: fn => Right(fn(value)), 
   
     //Making Right an instance of Monad 
     mBind: fn => fn(value),
@@ -11,9 +19,15 @@ const Right = (value) => ({
 
 const Left = (value) => ({
     valueOf: () => value,
+
+    //Making Right an instance of Semigroup
+    mappend: mb => mb,
   
+    //Making Left an instance of Functor
+    fmap: _ => Left(value),  
+
     //Making Left an instance of Monad 
-    mBind: _ => Left(value),
+    mBind: _ => Left(value),  
     /*
         Return is not implemented in this case since it is supposed to recieve a value
         and return Right(value) in the Applicative (since return = pure) instance from Either
@@ -32,7 +46,7 @@ console.log(either((a) => a.length,(a) => a * 3,Right(6)));
 const add2Either = (a) =>{
     try{
         if(a === undefined)
-            throw new Error();
+            throw new Error("Value of a is not defined");
         return Right(a + 2);
     }
     catch(e){
@@ -52,6 +66,31 @@ const multiply2Either = (a) =>{
 console.log(Right(undefined).mBind(add2Either).mBind(multiply2Either).valueOf());
 
 console.log(Right(3).mBind(add2Either).mBind(multiply2Either).valueOf());
+
+
+//Proving that it satisfies the Semigroup law
+
+/*
+  Associativity: (x <> y) <> z = x <> (y <> z)
+*/
+
+const semigroupAssociativity = (x,y,z) => x.mappend(y).mappend(z).valueOf() === x.mappend(y.mappend(z)).valueOf(); 
+
+console.log('Semigroup associativity', semigroupAssociativity(Left(2), Left(5), Right(7)));
+
+//Proving that it satisfies the Functor laws
+
+/*
+  Identity:  fmap id = id
+  Composition: fmap f . g = fmap f . fmap g
+*/
+
+const functorIdentity = fa => fa.fmap(a=>a).valueOf() === fa.valueOf();
+
+const functorComposition = (fa,f,g) => fa.fmap((commonFns.compose(f,g))).valueOf() === fa.fmap(f).fmap(g).valueOf();
+
+console.log('identity',functorIdentity(Right(6)));
+console.log('composition ', functorComposition(Right(8),a => a + 5, b => b + 7));
 
 /*
 Proving that it satisfies the monadic laws
