@@ -1,4 +1,4 @@
-const commonFns = require('./common_functions')
+const commonFns = require('../common_functions')
 
 //Value Constructors
 
@@ -35,11 +35,9 @@ const Left = (value) => ({
    getType: () => "Left"
 });
 
-//Implementing function either
-
 const either = (fa,fb,e) => e.getType() === "Left" ? fa(e.valueOf()) : fb(e.valueOf());
 
-console.log(either((a) => a.length,(a) => a * 3,Right(6)));
+module.exports = {Left, Right, either}
 
 //Testing it with a few functions
 
