@@ -48,3 +48,38 @@ describe("Semigroup implementation for Either", () => {
     expect(rightPrecedenceMappend).toBe(leftPrecedenceMappend);
   });
 });
+
+describe("Functor implementation for Either", () => {
+    const fa = Right(2);
+    const fb = Left(2);
+    const identityFn = a => a;
+    const add5 = a => a + 5;
+    const add3 = a => a + 3;
+
+    test("Identity rule for Functors (Right). fmap id = id", () => {
+        expect(fa.fmap(identityFn).valueOf()).toBe(fa.valueOf());
+    });
+
+    test("Identity rule for Functors (Left). fmap id = id", () => {
+        expect(fb.fmap(identityFn).valueOf()).toBe(fb.valueOf());
+    });
+
+    test("Composition rule for Functors (Right). fmap f . g = fmap f . fmap g", () => {
+        expect(fa.fmap(compose(add3, add5)).valueOf()).toBe(
+        fa
+            .fmap(add3)
+            .fmap(add5)
+            .valueOf()
+        );
+    });
+
+    test("Composition rule for Functors (Left). fmap f . g = fmap f . fmap g", () => {
+        expect(fb.fmap(compose(add3, add5)).valueOf()).toBe(
+        fb
+            .fmap(add3)
+            .fmap(add5)
+            .valueOf()
+        );
+    });
+
+})

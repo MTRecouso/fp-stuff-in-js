@@ -87,7 +87,7 @@ const functorIdentity = fa => fa.fmap(a=>a).valueOf() === fa.valueOf();
 
 const functorComposition = (fa,f,g) => fa.fmap((commonFns.compose(f,g))).valueOf() === fa.fmap(f).fmap(g).valueOf();
 
-console.log('identity',functorIdentity(Right(6)));
+console.log('identity',functorIdentity(Left(6)));
 console.log('composition ', functorComposition(Right(8),a => a + 5, b => b + 7));
 
 /*
