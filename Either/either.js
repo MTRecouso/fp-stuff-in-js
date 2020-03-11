@@ -65,31 +65,6 @@ console.log(Right(undefined).mBind(add2Either).mBind(multiply2Either).valueOf())
 
 console.log(Right(3).mBind(add2Either).mBind(multiply2Either).valueOf());
 
-
-//Proving that it satisfies the Semigroup law
-
-/*
-  Associativity: (x <> y) <> z = x <> (y <> z)
-*/
-
-const semigroupAssociativity = (x,y,z) => x.mappend(y).mappend(z).valueOf() === x.mappend(y.mappend(z)).valueOf(); 
-
-console.log('Semigroup associativity', semigroupAssociativity(Left(2), Left(5), Right(7)));
-
-//Proving that it satisfies the Functor laws
-
-/*
-  Identity:  fmap id = id
-  Composition: fmap f . g = fmap f . fmap g
-*/
-
-const functorIdentity = fa => fa.fmap(a=>a).valueOf() === fa.valueOf();
-
-const functorComposition = (fa,f,g) => fa.fmap((commonFns.compose(f,g))).valueOf() === fa.fmap(f).fmap(g).valueOf();
-
-console.log('identity',functorIdentity(Left(6)));
-console.log('composition ', functorComposition(Right(8),a => a + 5, b => b + 7));
-
 /*
 Proving that it satisfies the monadic laws
  
