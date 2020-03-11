@@ -81,5 +81,56 @@ describe("Functor implementation for Either", () => {
             .valueOf()
         );
     });
+});
 
-})
+describe("Monad implementation for Either", () => {
+  const fa = a => Right(a + 2);
+  const fb = a => Left(a + 2);
+  const g = a => Right(a * 2);
+  const ma = Right(2);
+  const mb = Left(2);
+  const a = 2;
+
+  test("Left identity rule for Monads (Right). return a >>= f ≡ f a", () => {
+    const left_exp = Right().mReturn(a).mBind(fa);
+    const right_exp = fa(a)
+    expect(left_exp.valueOf()).toBe(right_exp.valueOf());
+    expect(left_exp.getType()).toBe(right_exp.getType());
+  });
+
+  test("Left identity rule for Monads (Left). return a >>= f ≡ f a", () => {
+    const left_exp = Right().mReturn(a).mBind(fb);
+    const right_exp = fb(a)
+    expect(left_exp.valueOf()).toBe(right_exp.valueOf());
+    expect(left_exp.getType()).toBe(right_exp.getType());
+  });
+
+  test("Right identity rule for Monads (Right). m >>= return ≡ m", () => {
+    const left_exp = ma.mBind(ma.mReturn);
+    const right_exp = ma
+    expect(left_exp.valueOf()).toBe(right_exp.valueOf());
+    expect(left_exp.getType()).toBe(right_exp.getType());
+  });
+
+  test("Right identity rule for Monads (Left). m >>= return ≡ m", () => {
+    const left_exp = mb.mBind(Right().mReturn);
+    const right_exp = mb
+    expect(left_exp.valueOf()).toBe(right_exp.valueOf());
+    expect(left_exp.getType()).toBe(right_exp.getType());
+  });
+
+  test("Associatitity rule for Monads (Right). (m >>= f) >>= g ≡ m >>= (\\x -> f x >>= g)", () => {
+    const left_exp = ma.mBind(fa).mBind(g)
+    const right_exp = ma.mBind(x => fa(x).mBind(g))
+    expect(left_exp.valueOf()).toBe(right_exp.valueOf());
+    expect(left_exp.getType()).toBe(right_exp.getType());
+  });
+
+  test("Associatitity rule for Monads (Left). (m >>= f) >>= g ≡ m >>= (\\x -> f x >>= g)", () => {
+    const left_exp = ma.mBind(fb).mBind(g)
+    const right_exp = ma.mBind(x => fb(x).mBind(g))
+    expect(left_exp.valueOf()).toBe(right_exp.valueOf());
+    expect(left_exp.getType()).toBe(right_exp.getType());
+  });
+
+});
