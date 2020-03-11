@@ -10,13 +10,34 @@ describe("Semigroup implementation for Identity", () => {
   });
 
   test("Associativity rule for Semigroups. (x <> y) <> z = x <> (y <> z)", () => {
-    const rightPrecedenceMappend = Identity(2)
-      .mappend(Identity(5))
-      .mappend(Identity(7))
+    const x = Identity(2);
+    const y = Identity(5);
+    const z = Identity(7);
+    const rightPrecedenceMappend = 
+      x.mappend(y)
+      .mappend(z)
       .valueOf();
-    const leftPrecedenceMappend = Identity(2)
-      .mappend(Identity(5).mappend(Identity(7)))
+    const leftPrecedenceMappend = x
+      .mappend(y.mappend(z))
       .valueOf();
-    expect(rightPrecedenceMappend).toEqual(leftPrecedenceMappend);
+    expect(rightPrecedenceMappend).toBe(leftPrecedenceMappend);
+  });
+
+  test("Right identity rule for Monoids. x <> mempty = x", () => {
+    const x = Identity(2);
+    const mempty = Identity().mempty();
+    expect(x.mappend(mempty).valueOf()).toBe(x.valueOf());
+  });
+
+  test("Left identity rule for Monoids. mempty <> x = x", () => {
+    const x = Identity(2);
+    const mempty = Identity().mempty();
+    expect(mempty.mappend(x).valueOf()).toBe(x.valueOf());
+  });
+
+  test("Left identity rule for Monoids. mempty <> x = x", () => {
+    const x = Identity(2);
+    const mempty = Identity().mempty();
+    expect(mempty.mappend(x).valueOf()).toBe(x.valueOf());
   });
 });

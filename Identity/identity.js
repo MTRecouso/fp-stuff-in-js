@@ -5,9 +5,10 @@ const commonFns = require('../common_functions')
 const Identity = (value) => ({
   valueOf: () => value,
 
-  //Making Identity an instance of Monoid
+  //Making Identity an instance of Semigroup
   mappend: (mb) => Identity(commonFns.mappend(value, mb.valueOf())),
 
+  //Making Identity an instance of Monoid
   mempty: () => Identity({mempty: true}),
     
   //Making Identity an instance of Functor
@@ -20,27 +21,6 @@ const Identity = (value) => ({
 })
 
 module.exports = Identity
-
-//Proving that it satisfies the Monoid laws
-
-/*
-  Right identity: x <> mempty = x
-  Left identity: mempty <> x = x
-  Associativity: (x <> y) <> z = x <> (y <> z)
-*/
-
-const monoidRightId = x => x.mappend(Identity().mempty()).valueOf() === x.valueOf();
-
-const monoidLeftId = (x) => Identity().mempty().mappend(x).valueOf() === x.valueOf();
-
-const monoidAssociativity = (x,y,z) => x.mappend(y).mappend(z).valueOf() === x.mappend(y.mappend(z)).valueOf(); 
-
-
-console.log('Monoid left identity', monoidLeftId(Identity(5)))
-
-console.log('Monoid right identity', monoidRightId(Identity(2)));
-
-console.log('Monoid associativity', monoidAssociativity(Identity(2), Identity(5), Identity(7)));
 
 //Proving that it satisfies the Functor laws
 
