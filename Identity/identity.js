@@ -22,29 +22,6 @@ const Identity = (value) => ({
 
 module.exports = Identity
 
-//Proving that it satisfies the Functor laws
-
-/*
-  Identity:  fmap id = id
-  Composition: fmap f . g = fmap f . fmap g
-*/
-
-const functorIdentity = fa => fa.fmap(a=>a).valueOf() === fa.valueOf();
-
-const functorComposition = (fa,f,g) => fa.fmap((commonFns.compose(f,g))).valueOf() === fa.fmap(f).fmap(g).valueOf();
-
-console.log('identity',functorIdentity(Identity(6)))
-console.log('composition ', functorComposition(Identity(6),a => a + 5, b => b + 7))
-
-
-//Testing it with a few functions
-
-const add2 = (a) => Identity(a + 2);
-
-const multiply2 = (a) => Identity(a * 2);
-
-console.log(Identity(2).mBind(add2).mBind(multiply2).valueOf());
-
 /*
 Proving that it satisfies the monadic laws:
 
