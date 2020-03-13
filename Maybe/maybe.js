@@ -1,10 +1,9 @@
-const commonFns = require('./common_functions')
+const commonFns = require('../common_functions')
 
 //Value Constructors
 
 const Maybe = {
     Just: (value) => ({
-
         //Making Maybe.Just an instance of Semigroup
         mappend: (mb) => {
             if(mb.getType() === 'Nothing'){
@@ -46,6 +45,8 @@ const Maybe = {
     //Making Maybe.Just an instance of Monoid
     mempty: () => Maybe.Nothing()
 }
+
+module.exports = Maybe
 
 //Testing it with a few functions
 
