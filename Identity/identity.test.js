@@ -71,7 +71,6 @@ describe("Monad implementation for Identity", () => {
   });
 
   test("Right identity rule for Monads. m >>= return ≡ m", () => {
-    const m = Identity(2);
     expect(m.mBind(m.mReturn).valueOf()).toBe(m.valueOf());
   });
 
