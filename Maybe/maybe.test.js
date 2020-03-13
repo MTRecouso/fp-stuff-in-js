@@ -36,3 +36,15 @@ describe("Semigroup implementation for Maybe", () => {
     expect(rightPrecedenceMappend).toBe(leftPrecedenceMappend);
   });
 });
+
+describe("Monoid implementation for Maybe", () => {
+    const x = Maybe.Just(2);
+    const mempty = Maybe.mempty();
+    test("Right identity rule for Monoids. x <> mempty = x", () => {
+      expect(x.mappend(mempty).valueOf()).toBe(x.valueOf());
+    });
+  
+    test("Left identity rule for Monoids. mempty <> x = x", () => {
+      expect(mempty.mappend(x).valueOf()).toBe(x.valueOf());
+    });
+});

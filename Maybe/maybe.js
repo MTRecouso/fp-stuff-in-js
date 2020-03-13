@@ -48,38 +48,6 @@ const Maybe = {
 
 module.exports = Maybe
 
-//Testing it with a few functions
-
-const addUndefined = (a) => Maybe.Just(null)
-
-const add2Maybe = (a) => Maybe.Just(a + 2);
-
-const multiply2Maybe = (a) => Maybe.Just(a * 2);
-
-console.log(Maybe.Just(3).mBind(add2Maybe).mBind(multiply2Maybe).valueOf());
-
-console.log(Maybe.Just(null).mBind(add2Maybe).mBind(multiply2Maybe).valueOf());
-
-
-//Proving that it satisfies the Monoid laws
-
-/*
-  Right identity: x <> mempty = x
-  Left identity: mempty <> x = x
-  Associativity: (x <> y) <> z = x <> (y <> z)
-*/
-
-const monoidRightId = x => x.mappend(Maybe.mempty()).valueOf() === x.valueOf();
-
-const monoidLeftId = (x) => Maybe.mempty().mappend(x).valueOf() === x.valueOf();
-
-const monoidAssociativity = (x,y,z) => x.mappend(y).mappend(z).valueOf() === x.mappend(y.mappend(z)).valueOf(); 
-
-console.log('Monoid left identity', monoidLeftId(Maybe.Just(5)))
-
-console.log('Monoid right identity', monoidRightId(Maybe.Just(2)));
-
-console.log('Monoid associativity', monoidAssociativity(Maybe.Just(2), Maybe.Just(5), Maybe.Just(7)));
 
 //Proving that it satisfies the Functor laws
 
