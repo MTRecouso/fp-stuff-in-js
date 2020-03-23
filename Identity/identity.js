@@ -14,10 +14,14 @@ const Identity = (value) => ({
   //Making Identity an instance of Functor
   fmap: fn => Identity(fn(value)),
 
-  //Making Identity an instance of Monad
+  //Making Identity an instance of Apply
+  liftF2: fb => Identity(fb.valueOf()(value)),
 
+  //Making Identity an instance of Applicative
+  mReturn: (value) => Identity(value),
+
+  //Making Identity an instance of Monad
   mBind: fn => fn(value),
-  mReturn: (value) => Identity(value)
 })
 
 module.exports = Identity
