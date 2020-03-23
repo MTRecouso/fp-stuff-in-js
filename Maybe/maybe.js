@@ -48,6 +48,18 @@ const Maybe = {
 
 module.exports = Maybe
 
+//Testing it with a few functions
+
+const addUndefined = (a) => Maybe.Just(null)
+
+const add2Maybe = (a) => Maybe.Just(a + 2);
+
+const multiply2Maybe = (a) => Maybe.Just(a * 2);
+
+console.log(Maybe.Just(3).mBind(add2Maybe).mBind(multiply2Maybe).valueOf());
+
+console.log(Maybe.Just(null).mBind(add2Maybe).mBind(multiply2Maybe).valueOf());
+
 
 //Proving that it satisfies the Functor laws
 
