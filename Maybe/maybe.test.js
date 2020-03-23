@@ -1,4 +1,5 @@
 const Maybe = require("./maybe");
+const { compose } = require("../common_functions");
 
 describe("Semigroup implementation for Maybe", () => {
   test.each([
@@ -41,4 +42,31 @@ describe("Monoid implementation for Maybe", () => {
     test("Left identity rule for Monoids. mempty <> x = x", () => {
       expect(mempty.mappend(x).valueOf()).toBe(x.valueOf());
     });
+});
+
+describe("Functor implementation for Maybe", () => {
+  test.each([
+    ["Just", Maybe.Just(2)],
+    ["Nothing", Maybe.Nothing()],
+  ])
+  ("Identity rule for Functors (%s). fmap id = id", 
+  (_, fa) => {
+    const identityFn = a => a;
+    fmap_result = fa.fmap(identityFn)
+    expect(fmap_result.valueOf()).toBe(fa.valueOf());
+    expect(fmap_result.getType()).toBe(fa.getType());
+  });
+
+
+  const fa = Maybe.Just(2)
+  const add5 = a => a + 5;
+  const add3 = a => a + 3;
+  test("Composition rule for Functors. fmap f . g = fmap f . fmap g", () => {
+    expect(fa.fmap(compose(add3, add5)).valueOf()).toBe(
+      fa
+          .fmap(add3)
+          .fmap(add5)
+          .valueOf()
+      );
+  })
 });
