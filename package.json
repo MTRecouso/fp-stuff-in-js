@@ -1,0 +1,27 @@
+{
+  "name": "fp-stuff-in-js",
+  "version": "1.0.0",
+  "description": "Studies of common FP structures and functions using pure JS",
+  "dependencies": {
+    "jest": "^25.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MTRecouso/fp-stuff-in-js.git"
+  },
+  "keywords": [
+    "FP",
+    "functional",
+    "javascript"
+  ],
+  "author": "Mateus Recouso",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MTRecouso/fp-stuff-in-js/issues"
+  },
+  "homepage": "https://github.com/MTRecouso/fp-stuff-in-js#readme"
+}
