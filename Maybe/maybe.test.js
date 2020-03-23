@@ -70,3 +70,39 @@ describe("Functor implementation for Maybe", () => {
       );
   })
 });
+
+describe("Monad implementation for Maybe", () => {
+  const ma = Maybe.Just(2);
+  const a = 2;
+
+  const fa = a => Maybe.Just(a + 2);
+  const fb = a => Maybe.Nothing(a + 2);
+
+  test("Left identity rule for Monads. return a >>= f ≡ f a", () => {
+    const left_exp = Maybe.mReturn(a).mBind(fa);
+    const right_exp = fa(a)
+    expect(left_exp.valueOf()).toBe(right_exp.valueOf());
+    expect(left_exp.getType()).toBe(right_exp.getType());
+  });
+
+  test("Right identity rule for Monads. m >>= return ≡ m", () => {
+    const left_exp = ma.mBind(Maybe.mReturn);
+    const right_exp = ma
+    expect(left_exp.valueOf()).toBe(right_exp.valueOf());
+    expect(left_exp.getType()).toBe(right_exp.getType());
+  });
+
+  test.each([
+    ['Only Just', fa],
+    ['Just and Nothing', fb]
+  ])
+  ("Associatitity rule for Monads (%s). (m >>= f) >>= g ≡ m >>= (\\x -> f x >>= g)", 
+  (_, f) => {
+    const g = a => Maybe.Just(a * 2);
+    
+    const left_exp = ma.mBind(f).mBind(g)
+    const right_exp = ma.mBind(x => f(x).mBind(g))
+    expect(left_exp.valueOf()).toBe(right_exp.valueOf());
+    expect(left_exp.getType()).toBe(right_exp.getType());
+  });
+});
