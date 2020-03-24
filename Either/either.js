@@ -1,40 +1,40 @@
-const commonFns = require('../common_functions')
-
 //Value Constructors
 
-const Right = (value) => ({
-    valueOf: () => value,
+const Either = {
+    Right: (value) => ({
+        valueOf: () => value,
 
-    //Making Right an instance of Semigroup
-    mappend: mb => Right(value),
+        //Making Right an instance of Semigroup
+        mappend: mb => Either.Right(value),
 
-    //Making Right an instance of Functor
-    fmap: fn => Right(fn(value)), 
+        //Making Right an instance of Functor
+        fmap: fn => Either.Right(fn(value)), 
+
+
+    
+        //Making Right an instance of Monad 
+        mBind: fn => fn(value),
+        getType: () => "Right"
+    }),
+
+    Left: (value) => ({
+        valueOf: () => value,
+
+        //Making Right an instance of Semigroup
+        mappend: mb => mb,
   
-    //Making Right an instance of Monad 
-    mBind: fn => fn(value),
-    mReturn: (value) => Right(value),
-    getType: () => "Right"
-});
+        //Making Left an instance of Functor
+        fmap: _ => Either.Left(value),  
 
-const Left = (value) => ({
-    valueOf: () => value,
+        //Making Left an instance of Monad 
+        mBind: _ => Either.Left(value),  
 
-    //Making Right an instance of Semigroup
-    mappend: mb => mb,
-  
-    //Making Left an instance of Functor
-    fmap: _ => Left(value),  
-
-    //Making Left an instance of Monad 
-    mBind: _ => Left(value),  
-    /*
-        Return is not implemented in this case since it is supposed to recieve a value
-        and return Right(value) in the Applicative (since return = pure) instance from Either
-    */
-   getType: () => "Left"
-});
+        getType: () => "Left"
+    }),
+    //Making Either an instance of Applicatives
+    mReturn: (value) => Either.Right(value)
+};
 
 const either = (fa,fb,e) => e.getType() === "Left" ? fa(e.valueOf()) : fb(e.valueOf());
 
-module.exports = {Left, Right, either};
+module.exports = {Either, either};
