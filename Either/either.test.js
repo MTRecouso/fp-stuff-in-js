@@ -65,7 +65,7 @@ describe("Functor implementation for Either", () => {
     });
 
     test("Composition rule for Functors (Right). fmap f . g = fmap f . fmap g", () => {
-        expect(fa.fmap(compose(add3, add5)).valueOf()).toBe(
+        expect(fa.fmap(compose(add3)(add5)).valueOf()).toBe(
         fa
             .fmap(add3)
             .fmap(add5)
@@ -74,7 +74,7 @@ describe("Functor implementation for Either", () => {
     });
 
     test("Composition rule for Functors (Left). fmap f . g = fmap f . fmap g", () => {
-        expect(fb.fmap(compose(add3, add5)).valueOf()).toBe(
+        expect(fb.fmap(compose(add3) (add5)).valueOf()).toBe(
         fb
             .fmap(add3)
             .fmap(add5)

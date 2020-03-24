@@ -1,4 +1,4 @@
-const commonFns = require('../common_functions')
+const {mappend, compose} = require('../common_functions')
 
 //Value Constructor
 
@@ -6,7 +6,7 @@ const Identity = (value) => ({
   valueOf: () => value,
 
   //Making Identity an instance of Semigroup
-  mappend: (mb) => Identity(commonFns.mappend(value, mb.valueOf())),
+  mappend: (mb) => Identity(mappend(value, mb.valueOf())),
 
   //Making Identity an instance of Monoid
   mempty: () => Identity({mempty: true}),
@@ -22,9 +22,9 @@ const Identity = (value) => ({
 
   //Making Identity an instance of Monad
   mBind: fn => fn(value),
-})
+});
 
-module.exports = Identity
+module.exports = Identity;
 
 
 

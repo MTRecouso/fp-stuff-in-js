@@ -62,7 +62,7 @@ describe("Functor implementation for Maybe", () => {
   const add5 = a => a + 5;
   const add3 = a => a + 3;
   test("Composition rule for Functors. fmap f . g = fmap f . fmap g", () => {
-    expect(fa.fmap(compose(add3, add5)).valueOf()).toBe(
+    expect(fa.fmap(compose(add3)(add5)).valueOf()).toBe(
       fa
           .fmap(add3)
           .fmap(add5)
