@@ -71,6 +71,22 @@ describe("Functor implementation for Maybe", () => {
   })
 });
 
+describe("Apply Implementation for Maybe", () => {
+  test.each([
+    ["Just", Maybe.Just(a => a * 2)],
+    ["Just and Nothing", Maybe.Nothing()]
+  ])
+  ("Composition rule for Apply (%s) (.) <$> u <.> v <.> w = u <.> (v <.> w)", (_, v) => {
+    const u = Maybe.Just(a => a + 2);
+    const w = Maybe.Just(4);
+    const left_exp = w.liftF2(v.liftF2(u.fmap(compose)));
+    const right_exp = w.liftF2(v).liftF2(u);
+    expect(left_exp.valueOf()).toBe(right_exp.valueOf());
+    expect(left_exp.getType()).toBe(right_exp.getType());
+  });
+});
+
+
 describe("Monad implementation for Maybe", () => {
   const ma = Maybe.Just(2);
   const a = 2;
