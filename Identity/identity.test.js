@@ -47,11 +47,22 @@ describe("Functor implementation for Identity", () => {
   test("Composition rule for Functors. fmap f . g = fmap f . fmap g", () => {
     const add5 = a => a + 5;
     const add3 = a => a + 3;
-    expect(fa.fmap(compose(add3, add5)).valueOf()).toBe(
+    expect(fa.fmap(compose(add3)(add5)).valueOf()).toBe(
       fa
         .fmap(add3)
         .fmap(add5)
         .valueOf()
+    );
+  });
+});
+
+describe("Apply Implementation for Identity", () => {
+  test("Composition rule for Apply (.) <$> u <.> v <.> w = u <.> (v <.> w)", () => {
+    const u = Identity(a => a + 2);
+    const v = Identity(a => a * 2);
+    const w = Identity(4);
+    expect(w.liftF2(v.liftF2(u.fmap(compose))).valueOf()).toBe(
+      w.liftF2(v).liftF2(u).valueOf()
     );
   });
 });

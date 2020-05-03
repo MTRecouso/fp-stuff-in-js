@@ -1,5 +1,5 @@
-exports.compose = (...fns) => value =>
-  fns.reduceRight((prevFn, currentFn) => currentFn(prevFn(value)));
+exports.compose = fnb => fna => value =>
+  fnb(fna(value))
 
 exports.trace = x => {
   console.log(x);
