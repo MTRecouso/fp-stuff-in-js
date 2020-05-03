@@ -1,6 +1,12 @@
 exports.compose = fnb => fna => value =>
   fnb(fna(value))
 
+exports.composeMany = (...fns) => value =>
+  fns.reduceRight((x, fn) => fn(x), value)
+
+exports.pipe = (...fns) => value =>
+  fns.reduce((x, fn) => fn(x), value)
+
 exports.trace = x => {
   console.log(x);
   return x;
