@@ -83,6 +83,21 @@ describe("Functor implementation for Either", () => {
     });
 });
 
+describe("Apply Implementation for Either", () => {
+  test.each([
+    ["Right", Either.Right(a => a * 2)],
+    ["Left and Right", Either.Left(a => a * 2)]
+  ])
+  ("Composition rule for Apply (%s) (.) <$> u <.> v <.> w = u <.> (v <.> w)", (_, v) => {
+    const u = Either.Right(a => a + 2);
+    const w = Either.Right(4);
+    const left_exp = w.liftF2(v.liftF2(u.fmap(compose)));
+    const right_exp = w.liftF2(v).liftF2(u);
+    expect(left_exp.valueOf()).toBe(right_exp.valueOf());
+    expect(left_exp.getType()).toBe(right_exp.getType());
+  });
+});
+
 describe("Monad implementation for Either", () => {
   const fa = a => Either.Right(a + 2);
   const fb = a => Either.Left(a + 2);
