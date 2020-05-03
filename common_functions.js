@@ -28,7 +28,7 @@ exports.mappend = (a, b) => {
     case "number":
       return a + b;
     case "object":
-      return Object.assign(a, b);
+      return _objectMappend(a, b);
     case "boolean":
       return a && b;
     case "function":
@@ -51,3 +51,16 @@ const _mempty = (a) => {
       return _mempty;
   }
 };
+
+const _objectMappend = (a, b) => {
+  const a_with_mappends = Object.keys(a).reduce((result_obj, obj_key) => {
+    if(b.hasOwnProperty(obj_key)){
+      result_obj[obj_key] = this.mappend(a[obj_key], b[obj_key]);
+    }
+    else{
+      result_obj[obj_key] = a[obj_key];
+    }
+    return result_obj;
+  }, {});
+  return Object.assign({},b, a_with_mappends)
+}
